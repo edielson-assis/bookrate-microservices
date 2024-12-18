@@ -1,0 +1,40 @@
+# Server settings
+server:
+  port: 8000
+
+# Eureka settings
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+# Resilience4j settings
+resilience4j:
+  retry:
+    instances:
+      cambio-service:
+        max-attempts: 5
+        wait-duration: 1s
+        enable-exponential-backoff: true
+
+# Management settings
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Spring settings
+spring:
+  application:
+    name: cambio-service
+
+# SpringDoc settings
+springdoc:
+  show-actuator: true
+  server:
+    url: http://localhost:8765
+  api-docs:
+    path: cambio-service/v3/api-docs
+  swagger-ui:
+    config-url: /cambio-service/v3/api-docs/swagger-config
+    url: /cambio-service/v3/api-docs
