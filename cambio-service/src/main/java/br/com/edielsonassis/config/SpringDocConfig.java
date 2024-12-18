@@ -29,7 +29,7 @@ public class SpringDocConfig {
 					.termsOfService("https://edielsonassis.com.br/termos-a-serem-definidos")
 					.license(new License()
 							.name("Apache 2.0")
-							.url("https://github.com/edielson-assis/cambio-service-api/blob/main/LICENSE"))
+							.url("https://github.com/edielson-assis/book-and-cambio-microservices/blob/main/LICENSE"))
 					.contact(new Contact()
 							.name("Edielson Assis")
 							.email("grizos.ed@gmail.com")

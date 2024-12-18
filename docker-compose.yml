@@ -1,0 +1,123 @@
+version: '3.9'
+
+services:
+  zipkin-server:
+    image: openzipkin/zipkin:3.4.3
+    ports:
+      - 9411:9411
+    restart: always
+    depends_on:
+      - rabbit-mq
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+    networks:
+      - assis-network
+
+  rabbit-mq:
+    image: rabbitmq:4.0.4-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - assis-network
+      
+  book-db:
+    image: postgres:16.4
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: book_service
+      POSTGRES_ROOT_HOST: '%'
+      POSTGRES_TCP_PORT: 5432
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    networks:
+      - assis-network
+
+  naming-server:
+    image: edielsonassis/naming-server
+    build:
+      context: .
+      dockerfile: naming-server/Dockerfile
+    ports:
+      - 8761:8761
+    networks:
+      - assis-network
+
+  api-gateway:
+    image: edielsonassis/api-gateway
+    build:
+      context: .
+      dockerfile: api-gateway/Dockerfile
+    ports:
+      - 8765:8765
+    depends_on:
+      - naming-server
+      - rabbit-mq
+    environment:
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURIO: http://zipkin-server:9411/
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+    networks:
+      - assis-network
+
+  cambio-service:
+    image: edielsonassis/cambio-service
+    restart: always
+    build:
+      context: .
+      dockerfile: cambio-service/Dockerfile
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT:  http://zipkin-server:9411/api/v2/spans
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRINGDOC.SERVER.URL: http://localhost:8765
+    ports:
+      - 8000:8000
+    depends_on:
+      - naming-server
+      - rabbit-mq
+    networks:
+      - assis-network
+      
+  book-service:
+    image: edielsonassis/book-service
+    restart: always
+    build:
+      context: .
+      dockerfile: book-service/Dockerfile
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT:  http://zipkin-server:9411/api/v2/spans
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING.DATASOURCE.URL: jdbc:postgresql://book-db:5432/book_service?useSSL=false&serverTimezone=UTC&enabledTLSProtocols=TLSv1.2
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.FLYWAY.URL: jdbc:postgresql://book-db:5432/book_service?useSSL=false&serverTimezone=UTC&enabledTLSProtocols=TLSv1.2
+      SPRING.FLYWAY.USER: postgres
+      SPRING.FLYWAY.PASSWORD: admin123
+      SPRINGDOC.SERVER.URL: http://localhost:8765
+    ports:
+      - 8100:8100
+    depends_on:
+      - naming-server
+      - book-db
+      - rabbit-mq
+    networks:
+      - assis-network
+networks:
+  assis-network:
+    driver: bridge
