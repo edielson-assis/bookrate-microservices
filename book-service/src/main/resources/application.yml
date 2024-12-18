@@ -1,0 +1,72 @@
+# Server settings
+server:
+  port: 8100
+
+# Eureka settings
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+# Resilience4j settings
+resilience4j:
+  retry:
+    instances:
+      book-service:
+        max-attempts: 5
+        wait-duration: 1s
+        enable-exponential-backoff: true
+
+# Management settings
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Spring settings
+spring:
+  application:
+    name: book-service
+
+# Spring datasource settings
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/book_service?useTimezone=true&serverTimezone=UTC
+    username: postgres
+    password: admin123
+
+# Spring jackson settings
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization:
+      fail-on-empty-beans: false
+
+# Spring JPA settings
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+# Spring flyway settings
+  flyway:
+    url: jdbc:postgresql://localhost:5432/book_service
+    user: postgres
+    password: admin123
+
+# SpringDoc settings
+springdoc:
+  show-actuator: true
+  server:
+    url: http://localhost:8765
+  api-docs:
+    path: book-service/v3/api-docs
+  swagger-ui:
+    config-url: /book-service/v3/api-docs/swagger-config
+    url: /book-service/v3/api-docs
+     
+
+# Bookservice settings
+bookservice:
+  type:
+    currency: USD
