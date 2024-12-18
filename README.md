@@ -1,0 +1,1 @@
+[![Continuous Integration with Github](https://github.com/edielson-assis/book-and-cambio-microservices/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/edielson-assis/book-and-cambio-microservices/actions/workflows/docker-publish.yml)
