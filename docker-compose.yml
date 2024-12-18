@@ -39,9 +39,6 @@ services:
 
   naming-server:
     image: edielsonassis/naming-server
-    build:
-      context: .
-      dockerfile: naming-server/Dockerfile
     ports:
       - 8761:8761
     networks:
@@ -49,9 +46,6 @@ services:
 
   api-gateway:
     image: edielsonassis/api-gateway
-    build:
-      context: .
-      dockerfile: api-gateway/Dockerfile
     ports:
       - 8765:8765
     depends_on:
@@ -69,9 +63,6 @@ services:
   cambio-service:
     image: edielsonassis/cambio-service
     restart: always
-    build:
-      context: .
-      dockerfile: cambio-service/Dockerfile
     environment:
       TZ: America/Sao_Paulo
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
@@ -92,9 +83,6 @@ services:
   book-service:
     image: edielsonassis/book-service
     restart: always
-    build:
-      context: .
-      dockerfile: book-service/Dockerfile
     environment:
       TZ: America/Sao_Paulo
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
