@@ -1,0 +1,90 @@
+# Server settings
+server:
+  port: 8200
+  error:
+    include-stacktrace: never
+
+# Eureka settings
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+# Resilience4j settings
+resilience4j:
+  retry:
+    instances:
+      auth-service:
+        max-attempts: 5
+        wait-duration: 1s
+        enable-exponential-backoff: true
+
+# Management settings
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+
+# Security JWT settings
+security:
+  jwt:
+    token:
+      secret-key: secret-key
+      expiration-length: 1
+
+# Spring settings
+spring:
+  application:
+    name: auth-service
+
+# Spring datasource settings
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5433/user_service?useTimezone=true&serverTimezone=UTC
+    username: postgres
+    password: 1234567
+
+  # Spring jackson settings
+  jackson:
+    default-property-inclusion: NON_NULL
+    serialization:
+      fail-on-empty-beans: false
+  
+# Spring JPA settings  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+
+# Spring flyway settings
+  flyway:
+    url: jdbc:postgresql://localhost:5433/user_service
+    user: postgres
+    password: 1234567
+
+# Spring rabbitmq settings
+  rabbitmq:
+    addresses: amqp://guest:guest@rabbit-mq:5672
+
+# Spring cloud stream settings
+bookrate:
+  broker:
+    exchange: 
+      userEventExchange: bookrate.userevent
+
+# SpringDoc settings
+springdoc:
+  show-actuator: true
+  server:
+    url: http://localhost:8765
+    description: Servidor de desenvolvimento
+  api-docs:
+    path: auth-service/v3/api-docs
+  swagger-ui:
+    config-url: /auth-service/v3/api-docs/swagger-config
+    url: /auth-service/v3/api-docs 
+
+# CORS settings
+cors:
+  allowedOrigins: http://localhost:3000,http://localhost:8765
