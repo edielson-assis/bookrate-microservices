@@ -20,7 +20,7 @@ services:
       - 15672:15672
     networks:
       - assis-network
-      
+
   book-db:
     image: postgres:16.4
     environment:
@@ -28,10 +28,22 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: admin123
       POSTGRES_DB: book_service
-      POSTGRES_ROOT_HOST: '%'
-      POSTGRES_TCP_PORT: 5432
     ports:
-      - "5432:5432"
+      - 5432:5432
+    expose:
+      - 5432
+    networks:
+      - assis-network
+
+  auth-db:
+    image: postgres:16.4
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: user_service
+    ports:
+      - 5433:5432
     expose:
       - 5432
     networks:
@@ -72,6 +84,7 @@ services:
       SPRING_RABBITMQ_HOST: rabbit-mq
       SPRING_ZIPKIN_SENDER_TYPE: rabbit
       SPRINGDOC.SERVER.URL: http://localhost:8765
+      SPRINGDOC.SERVER.DESCRIPTION: Servidor de desenvolvimento
     ports:
       - 8000:8000
     depends_on:
@@ -79,7 +92,7 @@ services:
       - rabbit-mq
     networks:
       - assis-network
-      
+
   book-service:
     image: edielsonassis/book-service
     restart: always
@@ -98,11 +111,40 @@ services:
       SPRING.FLYWAY.USER: postgres
       SPRING.FLYWAY.PASSWORD: admin123
       SPRINGDOC.SERVER.URL: http://localhost:8765
+      SPRINGDOC.SERVER.DESCRIPTION: Servidor de desenvolvimento
     ports:
       - 8100:8100
     depends_on:
       - naming-server
       - book-db
+      - rabbit-mq
+    networks:
+      - assis-network
+
+  auth-service:
+    image: edielsonassis/auth-service
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
+      SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      MANAGEMENT.ZIPKIN.TRACING.ENDPOINT:  http://zipkin-server:9411/api/v2/spans
+      RABBIT_URI: amqp://guest:guest@rabbit-mq:5672
+      SPRING_RABBITMQ_HOST: rabbit-mq
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING.DATASOURCE.URL: jdbc:postgresql://auth-db:5432/user_service?useSSL=false&serverTimezone=UTC&enabledTLSProtocols=TLSv1.2
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: admin123
+      SPRING.FLYWAY.URL: jdbc:postgresql://auth-db:5432/user_service?useSSL=false&serverTimezone=UTC&enabledTLSProtocols=TLSv1.2
+      SPRING.FLYWAY.USER: postgres
+      SPRING.FLYWAY.PASSWORD: admin123
+      SPRINGDOC.SERVER.URL: http://localhost:8765
+      SPRINGDOC.SERVER.DESCRIPTION: Servidor de desenvolvimento
+    ports:
+      - 8200:8200
+    depends_on:
+      - naming-server
+      - auth-db
       - rabbit-mq
     networks:
       - assis-network
