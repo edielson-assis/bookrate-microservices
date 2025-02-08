@@ -17,11 +17,16 @@ public class SpringDocConfig {
 	@Value("${springdoc.server.url}")
 	private String springDocServer;
 
+	@Value("${springdoc.server.description}")
+	private String springDocServerDescription;
+
 	@Bean
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 				.components(new Components())
-				.addServersItem(new Server().url(springDocServer))
+				.addServersItem(new Server()
+					.url(springDocServer)
+					.description(springDocServerDescription))
 				.info(new Info()
 					.title("Cambio Service API")
 					.version("v1.0.0")

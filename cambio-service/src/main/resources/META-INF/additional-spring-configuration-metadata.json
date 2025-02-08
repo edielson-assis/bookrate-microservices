@@ -18,5 +18,10 @@
     "name": "resilience4j.retry.instances.cambio-service.enable-exponential-backoff",
     "type": "java.lang.String",
     "description": "A description for 'resilience4j.retry.instances.cambio-service.enable-exponential-backoff'"
+  },
+  {
+    "name": "springdoc.server.description",
+    "type": "java.lang.String",
+    "description": "A description for 'springdoc.server.description'"
   }
 ]}

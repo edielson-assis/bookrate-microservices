@@ -33,6 +33,7 @@ springdoc:
   show-actuator: true
   server:
     url: http://localhost:8765
+    description: Servidor de desenvolvimento
   api-docs:
     path: cambio-service/v3/api-docs
   swagger-ui:
