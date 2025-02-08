@@ -1,0 +1,15 @@
+CREATE TABLE users (
+    user_id UUID NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    role VARCHAR(5) NOT NULL,
+
+    CONSTRAINT pk_user PRIMARY KEY(user_id),
+    CONSTRAINT uk_user_email UNIQUE(email)
+);
+
+ALTER TABLE book ADD COLUMN book_id UUID;
+ALTER TABLE book ADD COLUMN user_id UUID NOT NULL;
+ALTER TABLE book DROP CONSTRAINT PK_BOOK;
+ALTER TABLE book DROP COLUMN id;
+ALTER TABLE book ADD CONSTRAINT pk_book PRIMARY KEY(book_id);
+ALTER TABLE book ADD CONSTRAINT fk_book_user FOREIGN KEY(user_id) REFERENCES users(user_id);

@@ -1,4 +1,4 @@
-package br.com.edielsonassis.service.exceptions;
+package br.com.edielsonassis.services.exceptions;
 
 public class ObjectNotFoundException extends RuntimeException {
     

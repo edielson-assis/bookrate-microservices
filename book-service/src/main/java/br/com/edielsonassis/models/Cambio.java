@@ -1,4 +1,4 @@
-package br.com.edielsonassis.model;
+package br.com.edielsonassis.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

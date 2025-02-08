@@ -1,4 +1,6 @@
-package br.com.edielsonassis.service;
+package br.com.edielsonassis.services;
+
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,15 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
-import br.com.edielsonassis.dto.BookRequest;
-import br.com.edielsonassis.dto.BookResponse;
-import br.com.edielsonassis.model.Book;
+import br.com.edielsonassis.dtos.BookRequest;
+import br.com.edielsonassis.dtos.BookResponse;
+import br.com.edielsonassis.models.Book;
+import br.com.edielsonassis.models.User;
 import br.com.edielsonassis.proxy.CambioProxy;
-import br.com.edielsonassis.repository.BookRepository;
-import br.com.edielsonassis.service.exceptions.CurrencyConverterException;
-import br.com.edielsonassis.service.exceptions.ObjectNotFoundException;
+import br.com.edielsonassis.repositories.BookRepository;
+import br.com.edielsonassis.services.exceptions.CurrencyConverterException;
+import br.com.edielsonassis.services.exceptions.ObjectNotFoundException;
+import br.com.edielsonassis.utils.AuthenticatedUser;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,6 +42,7 @@ public class BookService {
     public BookResponse createBook(BookRequest bookRequest) {
         var book = new Book();
         BeanUtils.copyProperties(bookRequest, book);
+        book.setUser(currentUser());
         repository.save(book);
 
         var bookResponse = new BookResponse();
@@ -45,8 +51,8 @@ public class BookService {
         return bookResponse;
     }
 
-    public BookResponse findBookById(Long id, String currency) {
-        var book = findBookById(id);
+    public BookResponse findBookById(UUID bookId, String currency) {
+        var book = findBookById(bookId);
         try {
             if (!currency.equalsIgnoreCase(typeCurrency)) {
                 log.info("Currency conversion requested: from {} to {}", typeCurrency, currency);
@@ -57,7 +63,7 @@ public class BookService {
             BeanUtils.copyProperties(book, bookResponse);
             return bookResponse;
         } catch (Exception e) {
-            log.error("Error converting currency for book ID: {}", id);
+            log.error("Error converting currency for book ID: {}", bookId);
             throw new CurrencyConverterException("Error converting currency");
         }
     }
@@ -80,18 +86,54 @@ public class BookService {
                             bookResponse.setPrice(cambio.getConvertedValue());
                         } 
                     } catch (Exception e) {
-                        log.error("Error converting price for book ID={} to currency={}", book.getId(), currency);
-                        throw new CurrencyConverterException("Error converting price for book ID=" + book.getId());
+                        log.error("Error converting price for book ID={} to currency={}", book.getBookId(), currency);
+                        throw new CurrencyConverterException("Error converting price for book ID=" + book.getBookId());
                     }
                     return bookResponse;
                 });
     }
-    
-    private Book findBookById(Long id) {
-        log.info("Searching for book with ID: {}", id);
-        return repository.findById(id).orElseThrow(() -> {
-            log.error("Book ID not found: {}", id);
+
+    @Transactional
+    public BookResponse updateBook(UUID bookId, BookRequest bookRequest) {
+        var book = findBookById(bookId);
+        hasPermission(book);
+        BeanUtils.copyProperties(bookRequest, book);
+        log.info("Updating book with ID: {}", book.getBookId());
+        repository.save(book);
+
+        var bookResponse = new BookResponse();
+        BeanUtils.copyProperties(book, bookResponse);
+        return bookResponse;
+    }
+
+    @Transactional
+    public void deleteBook(UUID bookId) {
+        var book = findBookById(bookId);
+        hasPermission(book);
+        log.info("Deleting book with ID: {}", book.getBookId());
+        repository.delete(book);
+    }
+
+    private Book findBookById(UUID bookId) {
+        log.info("Searching for book with ID: {}", bookId);
+        return repository.findById(bookId).orElseThrow(() -> {
+            log.error("Book ID not found: {}", bookId);
             return new ObjectNotFoundException("Book not found");
         });
+    }
+
+    private boolean hasPermission(Book book) {
+        if (!(currentUser().equals(book.getUser()) || isAdmin(currentUser()))) {
+            throw new AccessDeniedException("Access denied");
+        }
+        return true;
+    }
+
+    private User currentUser() {
+        return AuthenticatedUser.getCurrentUser();
+    }
+
+    private boolean isAdmin(User user) {
+        return user.getRole().equals("ADMIN");
     }
 }

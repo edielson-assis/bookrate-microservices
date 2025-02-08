@@ -8,5 +8,30 @@
     "name": "springdoc.server.url",
     "type": "java.lang.String",
     "description": "A description for 'springdoc.server.url'"
+  },
+  {
+    "name": "springdoc.server.description",
+    "type": "java.lang.String",
+    "description": "A description for 'springdoc.server.description'"
+  },
+  {
+    "name": "security.jwt.token.secret-key",
+    "type": "java.lang.String",
+    "description": "A description for 'security.jwt.token.secret-key'"
+  },
+  {
+    "name": "cors.allowed-origins",
+    "type": "java.lang.String",
+    "description": "A description for 'cors.allowed-origins'"
+  },
+  {
+    "name": "bookrate.broker.exchange.user-event-exchange",
+    "type": "java.lang.String",
+    "description": "A description for 'bookrate.broker.exchange.user-event-exchange'"
+  },
+  {
+    "name": "bookrate.broker.queue.user-event-queue.name",
+    "type": "java.lang.String",
+    "description": "A description for 'bookrate.broker.queue.user-event-queue.name'"
   }
 ]}

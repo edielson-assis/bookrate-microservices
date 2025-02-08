@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import br.com.edielsonassis.model.Cambio;
+import br.com.edielsonassis.models.Cambio;
 
 @FeignClient(name = "cambio-service")
 public interface CambioProxy {

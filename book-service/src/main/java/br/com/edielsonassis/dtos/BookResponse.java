@@ -1,8 +1,9 @@
-package br.com.edielsonassis.dto;
+package br.com.edielsonassis.dtos;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -15,7 +16,7 @@ import lombok.Setter;
 public class BookResponse implements Serializable {
     
     @Schema(description = "Unique identifier of the book", example = "1")
-    private Long id;
+    private UUID bookId;
 
     @Schema(description = "Name of the author", example = "Robert C. Martin")
     private String author;

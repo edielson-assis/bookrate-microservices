@@ -23,6 +23,12 @@ management:
     sampling:
       probability: 1.0
 
+# Security JWT settings
+security:
+  jwt:
+    token:
+      secret-key: secret-key
+
 # Spring settings
 spring:
   application:
@@ -33,7 +39,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/book_service?useTimezone=true&serverTimezone=UTC
     username: postgres
-    password: admin123
+    password: 1234567
 
 # Spring jackson settings
   jackson:
@@ -52,21 +58,38 @@ spring:
   flyway:
     url: jdbc:postgresql://localhost:5432/book_service
     user: postgres
-    password: admin123
+    password: 1234567
+
+# Spring rabbitmq settings
+  rabbitmq:
+    addresses: amqp://guest:guest@rabbit-mq:5672
+
+# Spring cloud stream settings
+bookrate:
+  broker:
+    exchange: 
+      userEventExchange: bookrate.userevent
+    queue:
+      userEventQueue:
+        name: bookrate.userevent.ms.book
 
 # SpringDoc settings
 springdoc:
   show-actuator: true
   server:
     url: http://localhost:8765
+    description: Servidor de desenvolvimento
   api-docs:
     path: book-service/v3/api-docs
   swagger-ui:
     config-url: /book-service/v3/api-docs/swagger-config
-    url: /book-service/v3/api-docs
-     
+    url: /book-service/v3/api-docs     
 
 # Bookservice settings
 bookservice:
   type:
     currency: USD
+
+# CORS settings
+cors:
+  allowedOrigins: http://localhost:3000,http://localhost:8765

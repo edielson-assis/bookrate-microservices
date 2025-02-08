@@ -1,4 +1,4 @@
-package br.com.edielsonassis.dto;
+package br.com.edielsonassis.dtos;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

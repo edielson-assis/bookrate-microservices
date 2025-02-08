@@ -4,11 +4,14 @@ import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import br.com.edielsonassis.service.exceptions.CurrencyConverterException;
-import br.com.edielsonassis.service.exceptions.ObjectNotFoundException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+
+import br.com.edielsonassis.services.exceptions.CurrencyConverterException;
+import br.com.edielsonassis.services.exceptions.ObjectNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -25,6 +28,34 @@ public class ControllerExceptionHandler {
     public ResponseEntity<StandardError> notFound(ObjectNotFoundException exception, HttpServletRequest request) {
         String error = "Not Found";
         HttpStatus status = HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(errors(status, error, exception, request));
+    }
+
+    @ExceptionHandler(JWTVerificationException.class)
+	public ResponseEntity<StandardError> jwtVerificationExcpetionHandler(SecurityException exception, HttpServletRequest request) {
+        String error = "Access denied";
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        return ResponseEntity.status(status).body(errors(status, error, exception, request));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<StandardError> accessDeniedExcpetionHandler(AccessDeniedException exception, HttpServletRequest request) {
+        String error = "Access denied";
+        HttpStatus status = HttpStatus.FORBIDDEN;
+        return ResponseEntity.status(status).body(errors(status, error, exception, request));
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<StandardError> validationExcpetionHandler(IllegalStateException exception, HttpServletRequest request) {
+        String error = "Invalid request";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(errors(status, error, exception, request));
+    }
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<StandardError> validationExcpetionHandler(IllegalArgumentException exception, HttpServletRequest request) {
+        String error = "Invalid request";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
         return ResponseEntity.status(status).body(errors(status, error, exception, request));
     }
 
