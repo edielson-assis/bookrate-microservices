@@ -1,9 +1,14 @@
+# Server settings
 server:
   port: 8765
+
+# Eureka settings
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+# Spring settings
 spring:
   application:
     name: api-gateway
@@ -13,6 +18,10 @@ spring:
         locator:
           enabled: true
       routes:
+      - id: auth-service
+        uri: lb://auth-service
+        predicates:
+        - Path=/auth-service/**
       - id: cambio-service
         uri: lb://cambio-service
         predicates:
