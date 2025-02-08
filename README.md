@@ -23,6 +23,13 @@ Já o microserviço de livros permite que os usuários cadastrem e consultem pre
 
 ## :bulb: Funcionalidades
 
+### :lock: Autenticação do usuário
+
+- `Login de usuário`: O usuário deve fazer login para se autenticar na plataforma. Credênciais que devem ser usadas: email e senha. Toda comunicação e feita via token JWT.
+- `Cadastro do usuário`: Caso o usuário não possua cadastro, deverá se cadastrar para conseguir fazer login.
+- `Atualização da senha do usuário`: O usuário poderá poderá atualizar a senha. Ele deverá informar a senha antiga e a nova senha.
+- `Exclusão da conta do usuário`: O usuário poderá excluir a sua conta da plataforma.
+
 ### 💰 Taxa de câmbio 
 
 - `Consulta do câmbio`: O usuário pode consultar a taxa de câmbio, pra diversas moedas, em tempo real.
@@ -97,8 +104,10 @@ Depois de clonar o projeto, siga as instruções do passo 2 em diante para confi
 - [Spring Data JPA](https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa/3.2.1)
 - [Bean Validation API](https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api/3.0.2)
 - [Spring Boot Starter Web](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web)
+- [Spring Security](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security/3.2.1)
 - [Flyway PostgreSQL](https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql)
 - [Flyway Core](https://mvnrepository.com/artifact/org.flywaydb/flyway-core/11.1.0)
+- [Java JWT](https://mvnrepository.com/artifact/com.auth0/java-jwt/4.4.0)
 - [Swagger](https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui/2.3.0)
 - [Docker](https://docs.docker.com/)
 - [Spring cloud](https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-server)
